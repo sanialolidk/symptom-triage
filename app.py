@@ -32,12 +32,12 @@ html, body, [class*="css"] {
 }
 
 .hero {
-  background: linear-gradient(165deg, #1c2434 0%, #2a3548 55%, #1f2a3d 100%);
+  background: linear-gradient(165deg, #0d3b47 0%, #145a63 52%, #1a4f5c 100%);
   color: #fff;
   border-radius: 16px;
   padding: 1.6rem 1.75rem 1.35rem;
   margin-bottom: 1.5rem;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
 }
 .hero h1 {
   font-family: "Libre Baskerville", Georgia, serif;
@@ -73,21 +73,21 @@ html, body, [class*="css"] {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #6b7a8f;
+  color: #5f7d85;
   margin: 0 0 0.75rem;
 }
 
 .card {
   background: #fff;
-  border: 1px solid #e4ddd3;
+  border: 1px solid #c5dede;
   border-radius: 14px;
   padding: 1rem 1.1rem;
   margin-bottom: 0.75rem;
-  box-shadow: 0 1px 2px rgba(28,36,52,0.05);
+  box-shadow: 0 1px 2px rgba(13,59,71,0.06);
 }
 .card.featured {
-  border-color: #d4b0a6;
-  box-shadow: 0 8px 24px rgba(28,36,52,0.08);
+  border-color: #9fd4d9;
+  box-shadow: 0 8px 24px rgba(20,90,99,0.12);
 }
 .card-head {
   display: flex;
@@ -100,7 +100,7 @@ html, body, [class*="css"] {
   margin: 0;
   font-family: "Libre Baskerville", Georgia, serif;
   font-size: 1.05rem;
-  color: #1c2434;
+  color: #1a2f35;
 }
 .pill {
   font-size: 0.68rem;
@@ -109,13 +109,13 @@ html, body, [class*="css"] {
   text-transform: uppercase;
   padding: 0.25rem 0.55rem;
   border-radius: 999px;
-  background: #e8f2ed;
-  color: #3d6b5a;
+  background: #dff0f2;
+  color: #1a6b73;
   white-space: nowrap;
 }
 .pill.low {
-  background: #fdf4e7;
-  color: #7a5518;
+  background: #e8f4fa;
+  color: #3d6f8a;
 }
 
 .dx-row {
@@ -126,14 +126,14 @@ html, body, [class*="css"] {
   font-size: 0.84rem;
   margin-bottom: 0.35rem;
 }
-.dx-rank { font-weight: 700; color: #7a2e1c; font-size: 0.78rem; }
-.dx-name { color: #1c2434; font-weight: 500; }
-.dx-pct { font-weight: 700; color: #3d4a5c; font-variant-numeric: tabular-nums; }
+.dx-rank { font-weight: 700; color: #1a6b73; font-size: 0.78rem; }
+.dx-name { color: #1a2f35; font-weight: 500; }
+.dx-pct { font-weight: 700; color: #3d5a62; font-variant-numeric: tabular-nums; }
 .bar-track {
   grid-column: 2 / -1;
   height: 5px;
   border-radius: 999px;
-  background: #e4ddd3;
+  background: #d4ecec;
   overflow: hidden;
   margin-bottom: 0.35rem;
 }
@@ -141,7 +141,7 @@ html, body, [class*="css"] {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #b84a32, #d4765f);
+  background: linear-gradient(90deg, #2a8a94, #5bb8c4);
 }
 
 .banner {
@@ -152,29 +152,29 @@ html, body, [class*="css"] {
   border: 1px solid;
 }
 .banner strong { display: block; margin-bottom: 0.15rem; }
-.banner.warn { background: #fdf4e7; border-color: #e8c98a; color: #7a5518; }
-.banner.conflict { background: #f3e4df; border-color: #ddb8ae; color: #7a2e1c; }
-.banner.ok { background: #e8f2ed; border-color: #b9d5c8; color: #3d6b5a; }
+.banner.warn { background: #e8f4fa; border-color: #a8cce0; color: #3d6f8a; }
+.banner.conflict { background: #dff0f8; border-color: #9fd4e8; color: #1a5f75; }
+.banner.ok { background: #e4f5f0; border-color: #a8d9c8; color: #2a6b5a; }
 
 .empty {
   text-align: center;
-  color: #6b7a8f;
+  color: #5f7d85;
   padding: 2.5rem 1.5rem;
-  border: 1px dashed #cfc4b6;
+  border: 1px dashed #a8cdd0;
   border-radius: 14px;
-  background: rgba(255,255,255,0.55);
+  background: rgba(255,255,255,0.6);
 }
 .empty strong {
   display: block;
   font-family: "Libre Baskerville", Georgia, serif;
-  color: #3d4a5c;
+  color: #3d5a62;
   font-size: 1.1rem;
   margin-bottom: 0.35rem;
 }
 
 div[data-testid="stVerticalBlock"] > div:has(> div.intake-panel) {
   background: #fff;
-  border: 1px solid #e4ddd3;
+  border: 1px solid #c5dede;
   border-radius: 14px;
   padding: 0.25rem 0.75rem 0.75rem;
 }
@@ -186,8 +186,8 @@ div[data-testid="stVerticalBlock"] > div:has(> div.intake-panel) {
 .stButton > button[kind="secondary"] {
   border-radius: 999px;
   font-weight: 600;
-  border-color: #cfc4b6;
-  color: #7a2e1c;
+  border-color: #a8cdd0;
+  color: #1a6b73;
 }
 </style>
 """
@@ -247,12 +247,12 @@ def _branch_card(branch: dict, featured: bool = False) -> None:
     weights = branch.get("modality_weights")
     if weights:
         weights_html = (
-            f'<p style="margin:0.6rem 0 0;font-size:0.8rem;color:#6b7a8f">'
+            f'<p style="margin:0.6rem 0 0;font-size:0.8rem;color:#5f7d85">'
             f"text {weights['text']:.2f} · structured {weights['structured']:.2f}</p>"
         )
     abstain_html = ""
     if branch.get("abstain") and branch.get("abstain_message"):
-        abstain_html = f'<p style="margin:0 0 0.5rem;font-size:0.82rem;color:#7a5518">{html.escape(branch["abstain_message"])}</p>'
+        abstain_html = f'<p style="margin:0 0 0.5rem;font-size:0.82rem;color:#3d6f8a">{html.escape(branch["abstain_message"])}</p>'
 
     st.markdown(
         f"""
