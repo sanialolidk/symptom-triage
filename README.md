@@ -56,7 +56,7 @@ http://localhost:5174 — port 8001 so it doesn't fight with climate-signal on 8
 Weights aren't in git (~510 MB). Streamlit Cloud pulls them from [sanialolidk/symptom-triage-models](https://huggingface.co/sanialolidk/symptom-triage-models) on first load. One-time upload from a machine that already trained:
 
 ```bash
-hf login
+hf auth login
 python scripts/upload_models_hf.py
 ```
 
