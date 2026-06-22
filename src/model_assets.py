@@ -9,7 +9,7 @@ from huggingface_hub import hf_hub_download
 
 from .paths import project_path
 
-HF_REPO = "sanialolidk/symptom-triage-models"
+HF_REPO = "saniathankan5/symptom-triage-models"
 
 # Artifacts gitignored locally — metrics.json stays in the repo.
 ARTIFACTS = (

@@ -23,9 +23,16 @@ def main() -> None:
 
     api = HfApi()
     who = api.whoami()
-    print(f"logged in as {who['name']}")
+    username = who["name"]
+    repo_id = f"{username}/symptom-triage-models"
+    if repo_id != HF_REPO:
+        raise SystemExit(
+            f"HF account is {username} but src/model_assets.py expects {HF_REPO}.\n"
+            f"Update HF_REPO to {repo_id!r} and push before uploading."
+        )
+    print(f"logged in as {username}")
 
-    create_repo(HF_REPO, repo_type="model", exist_ok=True, private=False)
+    create_repo(repo_id, repo_type="model", exist_ok=True, private=False)
 
     for rel in ARTIFACTS:
         path = MODELS_DIR / rel
@@ -33,11 +40,11 @@ def main() -> None:
         api.upload_file(
             path_or_fileobj=str(path),
             path_in_repo=rel,
-            repo_id=HF_REPO,
+            repo_id=repo_id,
             repo_type="model",
         )
 
-    print(f"done — https://huggingface.co/{HF_REPO}")
+    print(f"done — https://huggingface.co/{repo_id}")
 
 
 if __name__ == "__main__":

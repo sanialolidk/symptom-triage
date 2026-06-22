@@ -53,7 +53,7 @@ http://localhost:5174 — port 8001 so it doesn't fight with climate-signal on 8
 
 **Streamlit** (hosted demo): `streamlit run app.py`
 
-Weights aren't in git (~510 MB). Streamlit Cloud pulls them from [sanialolidk/symptom-triage-models](https://huggingface.co/sanialolidk/symptom-triage-models) on first load. One-time upload from a machine that already trained:
+Weights aren't in git (~510 MB). Streamlit Cloud pulls them from [saniathankan5/symptom-triage-models](https://huggingface.co/saniathankan5/symptom-triage-models) on first load. One-time upload from a machine that already trained:
 
 ```bash
 hf auth login
