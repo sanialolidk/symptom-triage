@@ -32,7 +32,7 @@ html, body, [class*="css"] {
 }
 
 .hero {
-  background: linear-gradient(165deg, #0d3b47 0%, #145a63 52%, #1a4f5c 100%);
+  background: linear-gradient(165deg, #1a3d2f 0%, #245c42 52%, #2d6b4f 100%);
   color: #fff;
   border-radius: 16px;
   padding: 1.6rem 1.75rem 1.35rem;
@@ -73,21 +73,21 @@ html, body, [class*="css"] {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #5f7d85;
+  color: #5a7566;
   margin: 0 0 0.75rem;
 }
 
 .card {
   background: #fff;
-  border: 1px solid #c5dede;
+  border: 1px solid #c8ddd0;
   border-radius: 14px;
   padding: 1rem 1.1rem;
   margin-bottom: 0.75rem;
-  box-shadow: 0 1px 2px rgba(13,59,71,0.06);
+  box-shadow: 0 1px 2px rgba(26,61,47,0.06);
 }
 .card.featured {
-  border-color: #9fd4d9;
-  box-shadow: 0 8px 24px rgba(20,90,99,0.12);
+  border-color: #9fd4b8;
+  box-shadow: 0 8px 24px rgba(36,92,66,0.12);
 }
 .card-head {
   display: flex;
@@ -100,7 +100,7 @@ html, body, [class*="css"] {
   margin: 0;
   font-family: "Libre Baskerville", Georgia, serif;
   font-size: 1.05rem;
-  color: #1a2f35;
+  color: #1e2f26;
 }
 .pill {
   font-size: 0.68rem;
@@ -109,13 +109,13 @@ html, body, [class*="css"] {
   text-transform: uppercase;
   padding: 0.25rem 0.55rem;
   border-radius: 999px;
-  background: #dff0f2;
-  color: #1a6b73;
+  background: #e3f2e8;
+  color: #2f6b4f;
   white-space: nowrap;
 }
 .pill.low {
-  background: #e8f4fa;
-  color: #3d6f8a;
+  background: #edf5e8;
+  color: #5a7a42;
 }
 
 .dx-row {
@@ -126,14 +126,14 @@ html, body, [class*="css"] {
   font-size: 0.84rem;
   margin-bottom: 0.35rem;
 }
-.dx-rank { font-weight: 700; color: #1a6b73; font-size: 0.78rem; }
-.dx-name { color: #1a2f35; font-weight: 500; }
-.dx-pct { font-weight: 700; color: #3d5a62; font-variant-numeric: tabular-nums; }
+.dx-rank { font-weight: 700; color: #2f6b4f; font-size: 0.78rem; }
+.dx-name { color: #1e2f26; font-weight: 500; }
+.dx-pct { font-weight: 700; color: #3f5c4a; font-variant-numeric: tabular-nums; }
 .bar-track {
   grid-column: 2 / -1;
   height: 5px;
   border-radius: 999px;
-  background: #d4ecec;
+  background: #d6eadc;
   overflow: hidden;
   margin-bottom: 0.35rem;
 }
@@ -141,7 +141,7 @@ html, body, [class*="css"] {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #2a8a94, #5bb8c4);
+  background: linear-gradient(90deg, #3d8b6e, #6bb892);
 }
 
 .banner {
@@ -152,29 +152,29 @@ html, body, [class*="css"] {
   border: 1px solid;
 }
 .banner strong { display: block; margin-bottom: 0.15rem; }
-.banner.warn { background: #e8f4fa; border-color: #a8cce0; color: #3d6f8a; }
-.banner.conflict { background: #dff0f8; border-color: #9fd4e8; color: #1a5f75; }
-.banner.ok { background: #e4f5f0; border-color: #a8d9c8; color: #2a6b5a; }
+.banner.warn { background: #f2f7e8; border-color: #c5d9a0; color: #5a7a42; }
+.banner.conflict { background: #e8f4df; border-color: #b5d9a8; color: #3d6b3a; }
+.banner.ok { background: #e4f5ec; border-color: #a8d9b8; color: #2f6b4f; }
 
 .empty {
   text-align: center;
-  color: #5f7d85;
+  color: #5a7566;
   padding: 2.5rem 1.5rem;
-  border: 1px dashed #a8cdd0;
+  border: 1px dashed #b5cfc0;
   border-radius: 14px;
   background: rgba(255,255,255,0.6);
 }
 .empty strong {
   display: block;
   font-family: "Libre Baskerville", Georgia, serif;
-  color: #3d5a62;
+  color: #3f5c4a;
   font-size: 1.1rem;
   margin-bottom: 0.35rem;
 }
 
 div[data-testid="stVerticalBlock"] > div:has(> div.intake-panel) {
   background: #fff;
-  border: 1px solid #c5dede;
+  border: 1px solid #c8ddd0;
   border-radius: 14px;
   padding: 0.25rem 0.75rem 0.75rem;
 }
@@ -186,8 +186,8 @@ div[data-testid="stVerticalBlock"] > div:has(> div.intake-panel) {
 .stButton > button[kind="secondary"] {
   border-radius: 999px;
   font-weight: 600;
-  border-color: #a8cdd0;
-  color: #1a6b73;
+  border-color: #b5cfc0;
+  color: #2f6b4f;
 }
 </style>
 """
@@ -247,12 +247,12 @@ def _branch_card(branch: dict, featured: bool = False) -> None:
     weights = branch.get("modality_weights")
     if weights:
         weights_html = (
-            f'<p style="margin:0.6rem 0 0;font-size:0.8rem;color:#5f7d85">'
+            f'<p style="margin:0.6rem 0 0;font-size:0.8rem;color:#5a7566">'
             f"text {weights['text']:.2f} · structured {weights['structured']:.2f}</p>"
         )
     abstain_html = ""
     if branch.get("abstain") and branch.get("abstain_message"):
-        abstain_html = f'<p style="margin:0 0 0.5rem;font-size:0.82rem;color:#3d6f8a">{html.escape(branch["abstain_message"])}</p>'
+        abstain_html = f'<p style="margin:0 0 0.5rem;font-size:0.82rem;color:#5a7a42">{html.escape(branch["abstain_message"])}</p>'
 
     st.markdown(
         f"""
