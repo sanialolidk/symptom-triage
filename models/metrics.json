@@ -1,0 +1,80 @@
+{
+  "dataset": {
+    "name": "DDXPlus (English)",
+    "task": "symptom triage, top-3 conditions",
+    "train_samples": 5000,
+    "test_samples": 1200,
+    "n_classes": 15,
+    "pathologies": [
+      "URTI",
+      "Viral pharyngitis",
+      "Anemia",
+      "HIV (initial infection)",
+      "Acute dystonic reactions",
+      "Anaphylaxis",
+      "Localized edema",
+      "Influenza",
+      "Allergic sinusitis",
+      "GERD",
+      "Pulmonary embolism",
+      "Pneumonia",
+      "Acute otitis media",
+      "Acute laryngitis",
+      "Panic attack"
+    ]
+  },
+  "models": {
+    "structured": "HistGradientBoosting",
+    "text": "DistilBERT",
+    "fusion": "concat or gated fusion",
+    "epochs": 2
+  },
+  "structured": {
+    "accuracy": 0.9975,
+    "macro_f1": 0.9973,
+    "top3_accuracy": 1.0,
+    "mrr": 0.9988,
+    "ece": 0.0027,
+    "abstain_rate": 0.0025,
+    "abstain_threshold": 0.9014999866485596,
+    "accuracy_when_not_abstaining": 0.9987
+  },
+  "text_only": {
+    "accuracy": 0.995,
+    "macro_f1": 0.996,
+    "top3_accuracy": 1.0,
+    "mrr": 0.9975,
+    "ece": 0.0286,
+    "abstain_rate": 0.0063,
+    "abstain_threshold": 0.9014999866485596,
+    "accuracy_when_not_abstaining": 0.9962
+  },
+  "multimodal": {
+    "accuracy": 0.9888,
+    "macro_f1": 0.9905,
+    "top3_accuracy": 1.0,
+    "mrr": 0.9944,
+    "ece": 0.06,
+    "abstain_rate": 0.0988,
+    "abstain_threshold": 0.9014999866485596,
+    "accuracy_when_not_abstaining": 1.0
+  },
+  "improvement": {
+    "top3_delta_vs_text": 0.0,
+    "top3_delta_vs_structured": 0.0,
+    "macro_f1_delta_vs_text": -0.0008
+  },
+  "eval_notes": {
+    "split": "DDXPlus official splits",
+    "abstention": "threshold from validate set",
+    "fusion": "concat_v1"
+  },
+  "abstention_policy": {
+    "threshold": 0.9014999866485596,
+    "abstain_rate": 0.12,
+    "selective_accuracy": 1.0,
+    "selective_macro_f1": 1.0,
+    "coverage": 0.88
+  },
+  "modality_disagreement_mean": 0.0847
+}

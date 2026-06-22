@@ -1,0 +1,12 @@
+venv/
+frontend/node_modules/
+frontend/dist/
+.pytest_cache/
+__pycache__/
+*.pyc
+.DS_Store
+data/*.csv
+models/*.pkl
+models/multimodal/
+models/distilbert_text/
+.streamlit/secrets.toml
