@@ -1,6 +1,7 @@
 venv/
 frontend/node_modules/
 frontend/dist/
+*.tsbuildinfo
 .pytest_cache/
 __pycache__/
 *.pyc
