@@ -9,9 +9,19 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-from src.inference import load_metrics, run_triage, symptom_catalog_for_ui
+from contextlib import asynccontextmanager
 
-app = FastAPI(title="Symptom Triage API")
+from src.inference import load_metrics, run_triage, symptom_catalog_for_ui
+from src.model_assets import ensure_models
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    ensure_models()
+    yield
+
+
+app = FastAPI(title="Symptom Triage API", lifespan=lifespan)
 
 origins = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174").split(",")
 app.add_middleware(
