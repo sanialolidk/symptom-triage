@@ -26,20 +26,21 @@ def _download_asset(filename: str) -> str:
         return str(cached)
     path = hf_hub_download(repo_id=DATASET_ID, filename=filename, repo_type="dataset")
     cached.parent.mkdir(parents=True, exist_ok=True)
-    cached.write_bytes(open(path, "rb").read())
+    from pathlib import Path as _Path
+    cached.write_bytes(_Path(path).read_bytes())
     return str(cached)
 
 
 @lru_cache(maxsize=1)
 def load_evidence_lexicon() -> dict:
-    path = _download_asset("release_evidences.json")
-    return json.loads(open(path, encoding="utf-8").read())
+    from pathlib import Path as _Path
+    return json.loads(_Path(_download_asset("release_evidences.json")).read_text(encoding="utf-8"))
 
 
 @lru_cache(maxsize=1)
 def load_condition_lexicon() -> dict:
-    path = _download_asset("release_conditions.json")
-    return json.loads(open(path, encoding="utf-8").read())
+    from pathlib import Path as _Path
+    return json.loads(_Path(_download_asset("release_conditions.json")).read_text(encoding="utf-8"))
 
 
 class EvidenceTextBuilder:
@@ -223,8 +224,9 @@ def prepare_with_validation(
     counts = train_raw["PATHOLOGY"].value_counts()
     keep_labels = counts.head(top_n_pathologies).index.tolist()
 
-    for frame in (train_raw, val_raw, test_raw):
-        frame.drop(frame.index[~frame["PATHOLOGY"].isin(keep_labels)], inplace=True)
+    train_raw = train_raw[train_raw["PATHOLOGY"].isin(keep_labels)].copy()
+    val_raw = val_raw[val_raw["PATHOLOGY"].isin(keep_labels)].copy()
+    test_raw = test_raw[test_raw["PATHOLOGY"].isin(keep_labels)].copy()
 
     def subsample(df, n):
         if len(df) > n:

@@ -133,17 +133,12 @@ def common_evidence_options(limit: int = 40) -> list[str]:
     return [row["id"] for row in symptom_catalog(limit)]
 
 
-def predict_structured(age: int, sex: str, evidence_tokens: list[str]) -> dict:
-    bundle = joblib.load(project_path("models", "structured_bundle.pkl"))
-    meta = load_meta()
+def _struct_probs(age: int, sex: str, evidence_tokens: list[str], meta: dict, bundle: dict) -> np.ndarray:
     row = build_structured_row(age, sex, evidence_tokens, meta)
-    probs = bundle["model"].predict_proba(bundle["scaler"].transform(row))[0]
-    return _format_result_branch(probs, bundle, "Structured")
+    return bundle["model"].predict_proba(bundle["scaler"].transform(row))[0]
 
 
-def predict_text_only(text: str) -> dict:
-    meta = load_meta()
-    device = _device()
+def _text_probs(text: str, device: torch.device) -> np.ndarray:
     model_dir = project_path("models", "distilbert_text")
     tokenizer = AutoTokenizer.from_pretrained(model_dir)
     model = AutoModelForSequenceClassification.from_pretrained(model_dir)
@@ -151,7 +146,19 @@ def predict_text_only(text: str) -> dict:
     enc = tokenizer(text, truncation=True, padding=True, max_length=160, return_tensors="pt")
     enc = {k: v.to(device) for k, v in enc.items()}
     with torch.no_grad():
-        probs = torch.softmax(model(**enc).logits, dim=1).cpu().numpy()[0]
+        return torch.softmax(model(**enc).logits, dim=1).cpu().numpy()[0]
+
+
+def predict_structured(age: int, sex: str, evidence_tokens: list[str]) -> dict:
+    bundle = joblib.load(project_path("models", "structured_bundle.pkl"))
+    meta = load_meta()
+    probs = _struct_probs(age, sex, evidence_tokens, meta, bundle)
+    return _format_result_branch(probs, bundle, "Structured")
+
+
+def predict_text_only(text: str) -> dict:
+    meta = load_meta()
+    probs = _text_probs(text, _device())
     return _format_branch(probs, meta["pathologies"], meta["abstain_threshold"], "Text")
 
 
@@ -162,7 +169,7 @@ def predict_multimodal(age: int, sex: str, evidence_tokens: list[str], text: str
     model_dir = project_path("models", "multimodal")
     tokenizer = DistilBertTokenizerFast.from_pretrained(model_dir)
     model = build_fusion_model(bundle, len(bundle["structured_cols"]), bundle["n_classes"])
-    model.load_state_dict(torch.load(model_dir / "fusion_model.pt", map_location=device))
+    model.load_state_dict(torch.load(model_dir / "fusion_model.pt", map_location=device, weights_only=True))
     model.to(device).eval()
 
     row = build_structured_row(age, sex, evidence_tokens, meta)
@@ -203,25 +210,19 @@ def _format_result_branch(probs: np.ndarray, bundle: dict, model_name: str) -> d
 
 
 def run_triage(age: int, sex: str, evidence_tokens: list[str], text: str) -> dict:
-    struct = predict_structured(age, sex, evidence_tokens)
-    text_res = predict_text_only(text)
-    fusion = predict_multimodal(age, sex, evidence_tokens, text)
-
-    # full prob vectors for disagreement (top-3 slice isn't enough)
     meta = load_meta()
-    struct_bundle = joblib.load(project_path("models", "structured_bundle.pkl"))
-    row = build_structured_row(age, sex, evidence_tokens, meta)
-    struct_full = struct_bundle["model"].predict_proba(struct_bundle["scaler"].transform(row))[0]
-
     device = _device()
-    model_dir = project_path("models", "distilbert_text")
-    tokenizer = AutoTokenizer.from_pretrained(model_dir)
-    text_model = AutoModelForSequenceClassification.from_pretrained(model_dir)
-    text_model.to(device).eval()
-    enc = tokenizer(text, truncation=True, padding=True, max_length=160, return_tensors="pt")
-    enc = {k: v.to(device) for k, v in enc.items()}
-    with torch.no_grad():
-        text_full = torch.softmax(text_model(**enc).logits, dim=1).cpu().numpy()[0]
+
+    # Load each model once and reuse the raw probability vectors for both
+    # the formatted branch output AND the disagreement calculation.
+    struct_bundle = joblib.load(project_path("models", "structured_bundle.pkl"))
+    struct_full = _struct_probs(age, sex, evidence_tokens, meta, struct_bundle)
+    struct = _format_result_branch(struct_full, struct_bundle, "Structured")
+
+    text_full = _text_probs(text, device)
+    text_res = _format_branch(text_full, meta["pathologies"], meta["abstain_threshold"], "Text")
+
+    fusion = predict_multimodal(age, sex, evidence_tokens, text)
 
     disagree = modality_disagreement(struct_full, text_full)
     disagree_flag = disagree > 0.35

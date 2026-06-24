@@ -9,15 +9,21 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
+import logging
 from contextlib import asynccontextmanager
 
 from src.inference import load_metrics, run_triage, symptom_catalog_for_ui
 from src.model_assets import ensure_models
 
+_log = logging.getLogger(__name__)
+
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    ensure_models()
+    try:
+        ensure_models()
+    except Exception as exc:
+        _log.warning("Model pre-load failed at startup: %s — /api/triage will download on first request", exc)
     yield
 
 
