@@ -2,19 +2,23 @@
 
 Sania Thankan — Penn State, Computational Data Science
 
-Ranks likely conditions from a symptom checklist + a short patient description. Uses [DDXPlus](https://arxiv.org/abs/2205.09148) (general medicine — not psychiatry). Follow-up to my ADE detector: same healthcare-ish NLP space, but multi-class and two input types instead of binary text-only.
+**The core problem:** DDXPlus has near-deterministic labels — symptom codes nearly uniquely identify the diagnosis, so single-model accuracy above 99% is expected, not impressive. The interesting engineering problem is what happens when the structured checklist and the free-text narrative *disagree*. This system measures that disagreement as KL divergence between the two model outputs and abstains rather than guessing when they conflict. When the fusion model commits to an answer, it's right 100% of the time on the test set — at 88% coverage.
+
+[**Live demo →**](https://symptom-triage-7jrurzhcdrelrv9y2k4jx9.streamlit.app/)
+
+Uses [DDXPlus](https://arxiv.org/abs/2205.09148) (general medicine — not psychiatry). Follow-up to my ADE detector: same space, but multi-class, two input types, and an explicit safety layer.
 
 ## Overview
 
-The app takes age, sex, checked symptoms, and free text. Three models run in parallel:
+Three models run in parallel on every request:
 
 - **Structured** — gradient boosting on symptom codes + demographics
 - **Text** — fine-tuned DistilBERT on the narrative
-- **Fusion** — combines both via a gated network that learns per-sample modality weights
+- **Fusion** — gated network that learns per-sample modality weights (α·text + (1−α)·structured)
 
-It returns a top-3 differential per model and flags when the checklist and the narrative don't agree — even when both models are confident.
+The abstention threshold and disagreement detector live in [`src/evaluation.py`](src/evaluation.py). When structured and text outputs diverge beyond a KL threshold of 0.35, the system flags a conflict regardless of confidence. The UI's "Mismatch example" button is the fastest way to see this fire.
 
-**Note on scope:** I call this multimodal because the inputs are genuinely different (checkbox symptoms vs prose). There are no images or audio. The patient text is generated from symptom codes for training; in the UI you can edit that text to simulate someone describing things differently than the form — that's the case I actually care about.
+**Note on scope:** the patient narrative is generated from symptom codes for training. In the UI you can edit that text to simulate someone describing things differently than the form — that's the case the system is actually designed for.
 
 ## Architecture
 
@@ -116,6 +120,21 @@ Three mechanisms in `evaluation.py` that don't usually appear in tutorial-level 
 **`tune_abstention_threshold(y_true, probs, target_abstain_rate=0.12)`** — sweeps confidence thresholds on the validation split to find the value that maximizes selective accuracy subject to a target abstention rate. The 0.90 threshold in `metrics.json` was found this way: 12% abstain rate, 100% selective accuracy, 88% coverage.
 
 **`expected_calibration_error(y_true, probs)`** — bins predictions by confidence and measures the gap between confidence and accuracy per bin. Used to compare how well each model knows what it doesn't know (GBM: 0.003, DistilBERT: 0.029, fusion: 0.060).
+
+## Robustness ablation (where this breaks)
+
+Clause-dropout applied to the test narrative at increasing rates. The structured model never sees text, so it's used as the invariant baseline:
+
+| Corruption | Text Top-3 | Text Macro F1 | Struct Top-3 | Mean disagreement ↑ |
+|------------|-----------|--------------|-------------|---------------------|
+| 0% (clean) | 99.92% | 0.988 | 99.92% | 0.091 |
+| 25% dropout | 99.92% | 0.989 | 99.92% | 0.094 |
+| 50% dropout | 99.92% | 0.988 | 99.92% | 0.100 |
+| 65% dropout | 99.92% | 0.988 | 99.92% | 0.101 |
+| 80% dropout | 99.92% | 0.987 | 99.92% | 0.105 |
+| 100% dropout | 99.92% | 0.986 | 99.92% | 0.108 |
+
+Text accuracy doesn't degrade because DDXPlus narratives are synthetically generated from symptom codes — even a heavily truncated narrative retains enough signal to recover the label. This is the dataset's fundamental limitation and the reason single-model accuracy is meaningless here. What the table does show: **mean modality disagreement rises 19%** from clean to fully corrupted text, confirming the detector is catching the distributional shift even when top-3 accuracy isn't moving. In production with real noisy patient notes, text-only accuracy would fall; the structured path and disagreement flag are there for exactly that scenario.
 
 ## Design decisions
 
